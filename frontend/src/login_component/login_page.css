@@ -1,0 +1,103 @@
+.login-page{
+    background-image: url("../images/office.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    top: 0; bottom: 0;
+    left: 0; right: 0;
+    position: fixed;
+}
+.navbar{
+    background-color: dimgrey;
+    height: 60px;
+    width: 100%;
+    display: flex;
+    justify-content: left;
+}
+
+.BA_logo{
+    padding: 5px 20px;
+    width: 120px;
+    height: 50px;
+}
+
+.BA_name{
+    font-family: "DejaVu Sans Light";
+    text-transform: capitalize;
+    font-size: larger;
+}
+
+.login-form{
+    position: absolute;
+    border-style: solid;
+    display: block;
+    border-width: 2px;
+    border-color: dimgrey;
+    border-radius: 5px;
+}
+
+.username-div, .password-div, .submit-div{
+    padding: 10px 20px;
+    font-family: "DejaVu Sans Light";
+    display: flex;
+}
+.user-labels{
+    font-weight: bolder;
+    padding-top: 9px;
+}
+#username, #password{
+    position: relative;
+    width: 68%;
+    height: 30px;
+    margin-left: 5px;
+    font-size: large;
+}
+.password-toggle {
+    padding-top: 10px;
+    right: 1px;
+    padding-left: 22px;
+    cursor: pointer;
+}
+#username::placeholder, #password::placeholder{
+    font-size: small;
+    font-weight: bold;
+    color: dimgrey;
+}
+#password{
+    left: 8px
+}
+.nwarnings, .pwarnings{
+    font-weight: bolder;
+    font-size: small;
+    color: red;
+    margin-bottom: 4px;
+    margin-top: 1px;
+    font-family: "DejaVu Sans Light";
+    padding-left: 40px;
+
+}
+.submit-div{
+    display: flex;
+    justify-content: center;
+}
+.submit-btn{
+    background-color: #35883a; /* Green */
+    border-width: 1px;
+    border-top-color: lightgreen;
+    border-left-color: lightgreen;
+    border-bottom: none;
+    border-right: none;
+    color: white;
+    padding: 12px 30px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.submit-btn:hover{
+    background-color: darkgreen;
+}
