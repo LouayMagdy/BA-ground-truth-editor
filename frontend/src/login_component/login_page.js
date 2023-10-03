@@ -8,7 +8,7 @@ function Login_page(){
         set_user({...user, [e.target.name]: e.target.value})
     }
 
-    let submit = (e) => {
+    let submit = async (e) => {
         e.preventDefault()
         const usernameWarning = document.querySelector('.nwarnings');
         const passwordWarning = document.querySelector('.pwarnings');
@@ -17,7 +17,14 @@ function Login_page(){
         if(user.username === '') usernameWarning.style.display = "block"
         if(user.password === '') passwordWarning.style.display = "block"
         if(user.username === '' || user.password === '') return
-        
+        let response = await fetch("http://demo6654677.mockable.io/revapp/login",
+            {
+                method : 'POST',
+                headers : {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            }).then((res) => res.json()).then((data) => {console.log(data, 'from server')})
         console.log(user)
         set_user({username: "", password: ""});
     }
