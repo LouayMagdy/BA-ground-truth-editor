@@ -17,14 +17,17 @@ function Login_page(){
         if(user.username === '') usernameWarning.style.display = "block"
         if(user.password === '') passwordWarning.style.display = "block"
         if(user.username === '' || user.password === '') return
-        let response = await fetch("http://demo6654677.mockable.io/revapp/login",
+        let response = await fetch("https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/login",
             {
                 method : 'POST',
                 headers : {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(user)
-            }).then((res) => res.json()).then((data) => {console.log(data, 'from server')})
+            }).then((res) => res.json()).then((data) => {
+                console.log(data.token, 'from server')
+
+            })
         console.log(user)
         set_user({username: "", password: ""});
     }
@@ -45,7 +48,7 @@ function Login_page(){
     }
 
     return <div className={'login-page'}>
-        <nav className={'navbar'}>
+        <nav className={'login-navbar'}>
             <img src={BA_logo} alt={"BA logo"} className={'BA_logo'}></img>
             <h3 className={'BA_name'}>bibliotheca <span className={'alex-span'}>alexandrina</span> </h3>
         </nav>
@@ -69,7 +72,7 @@ function Login_page(){
             </div>
             <p className={'pwarnings'} style={{display: "none" }}> Password Field seems to be Empty!! </p>
             <div className={'submit-div'}>
-                <button type={'submit'} className={'submit-btn'}> login </button>
+                <button type={'submit'} className={'submit-btn'}> login <i className="fas fa-sign-in-alt"></i></button>
             </div>
         </form>
     </div>

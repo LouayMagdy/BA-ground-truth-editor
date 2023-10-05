@@ -8,9 +8,9 @@
     left: 0; right: 0;
     position: fixed;
 }
-.navbar{
+.login-navbar{
     background-color: #414040;
-    height: 58px;
+    height: fit-content;
     width: 100%;
     display: flex;
     justify-content: left;
@@ -20,6 +20,7 @@
     padding: 5px 20px;
     width: 120px;
     height: 48px;
+    margin-bottom: 0;
     filter: grayscale(100%) invert(100%);
     -webkit-filter: grayscale(100%) invert(100%);
 }
@@ -29,6 +30,7 @@
     text-transform: uppercase;
     font-size: 25px;
     margin-top: 15px;
+    margin-bottom: 0;
     color: white;
     letter-spacing: 0.5mm;
     word-spacing: 1.5mm;
@@ -91,11 +93,7 @@
 }
 .submit-btn{
     background-color: #35883a; /* Green */
-    border-width: 1px;
-    border-top-color: lightgreen;
-    border-left-color: lightgreen;
-    border-bottom: none;
-    border-right: none;
+    border: none;
     color: white;
     padding: 12px 30px;
     text-align: center;
@@ -104,8 +102,12 @@
     font-size: 16px;
     margin: 4px 2px;
     cursor: pointer;
-    border-radius: 4px;
+    transition: 0.7s;
+    border-radius: 5px;
 }
 .submit-btn:hover{
     background-color: darkgreen;
+}
+.submit-btn:active{
+    transform: scale(1.1);
 }

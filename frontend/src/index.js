@@ -2,12 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 // import reportWebVitals from './reportWebVitals';
 import Login_page from "./login_component/login_page";
+import Task_list from "./task_list_component/task_list";
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Login_page/>
+    {/*<Task_list/>*/}
+    {/*  <Login_page/>*/}
   </React.StrictMode>
 );
 
