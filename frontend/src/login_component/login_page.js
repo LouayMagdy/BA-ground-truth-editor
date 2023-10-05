@@ -47,7 +47,7 @@ function Login_page(){
     return <div className={'login-page'}>
         <nav className={'navbar'}>
             <img src={BA_logo} alt={"BA logo"} className={'BA_logo'}></img>
-            <h3 className={'BA_name'}>bibliotheca alexandrina</h3>
+            <h3 className={'BA_name'}>bibliotheca <span className={'alex-span'}>alexandrina</span> </h3>
         </nav>
 
         <form className={'login-form'} onSubmit={(event) => submit(event)}

@@ -9,8 +9,8 @@
     position: fixed;
 }
 .navbar{
-    background-color: dimgrey;
-    height: 60px;
+    background-color: #414040;
+    height: 58px;
     width: 100%;
     display: flex;
     justify-content: left;
@@ -19,15 +19,23 @@
 .BA_logo{
     padding: 5px 20px;
     width: 120px;
-    height: 50px;
+    height: 48px;
+    filter: grayscale(100%) invert(100%);
+    -webkit-filter: grayscale(100%) invert(100%);
 }
 
 .BA_name{
     font-family: "DejaVu Sans Light";
-    text-transform: capitalize;
-    font-size: larger;
+    text-transform: uppercase;
+    font-size: 25px;
+    margin-top: 15px;
+    color: white;
+    letter-spacing: 0.5mm;
+    word-spacing: 1.5mm;
 }
-
+.alex-span{
+    color: dodgerblue;
+}
 .login-form{
     position: absolute;
     border-style: solid;
