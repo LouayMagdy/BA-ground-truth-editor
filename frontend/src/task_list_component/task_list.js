@@ -3,13 +3,15 @@ import BA_logo from "../images/BA.png";
 import {name} from "./tasks";
 import {useEffect, useState} from "react";
 
-function Task_list() {
+function Task_list({init_page}) {
     let [page_num, set_page] = useState(0)
     let [max_page_num, set_max_page] = useState(26)
     let [page_tasks, set_tasks] = useState([])
 
     useEffect(() => {
-        fetch('https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/tasks?page=0', {
+        let page = init_page >= 0? init_page : 0
+        set_page(page)
+        fetch(`https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/tasks?page=${page}`, {
             method : 'GET',
         }).then((res) => res.json()).then((data) => {
             console.log(data, 'from server')
@@ -20,7 +22,7 @@ function Task_list() {
 
     let change_page = async (change) => {
         set_page(page_num + change)
-        let response = await fetch(`https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/tasks?page=${page_num+change}`, {
+        await fetch(`https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/tasks?page=${page_num+change}`, {
             method : 'GET',
         }).then((res) => res.json()).then((data) => {
             console.log(data, 'from server')
@@ -67,7 +69,7 @@ function Task_list() {
         <div className={'page-slider'} style={{top: window.innerHeight * 21 / 24, left: window.innerWidth / 2.3}}>
             <button className={'slider-btn'} disabled={page_num <= 0} onClick={() => change_page(-1)}>
                 &larr; prev </button>
-            <input type={'text'} disabled={true} value={page_num} className={'page-num'}/>
+            <input type={'text'} disabled={true} value={page_num.toString()+' / '+max_page_num.toString()} className={'page-num'}/>
             <button className={'slider-btn'} disabled={page_num >= max_page_num}
                 onClick={() => change_page(1)}>next &rarr; </button>
         </div>
