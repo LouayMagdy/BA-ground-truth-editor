@@ -27,6 +27,7 @@ function Login_page(){
             let message = await response.json()
             console.log(message.token)
             localStorage.setItem('jrevwappt', message.token)
+            localStorage.setItem('revappname', user.username)
             navigate('/tasks/0', {state: user.username})
         }
         else if(response.status === 401) window.alert('Not Registered!\nPlease Contact One of The System Admins...')

@@ -7,11 +7,13 @@ function Task_list() {
     const location = useLocation()
     const navigate = useNavigate()
     const {page} = useParams()
-    const name = location.state
+    let name = location.state
     let [max_page_num, set_max_page] = useState(26)
     let [page_tasks, set_tasks] = useState([])
 
     useEffect(() => {
+        if(!localStorage.getItem('jrevwappt')) navigate('/login')
+        if (!name) name = localStorage.getItem('revappname')
         if(!Number.isInteger(Number(page))) navigate('/task/0')
         console.log(page)
         fetch(`https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/tasks?page=${page}`, {
@@ -56,9 +58,9 @@ function Task_list() {
                             <td> {13 * Number(page) + index + 1} </td> <td className={'filename'}> {task.filename} </td>
                             <td> {task.modified} </td> <td> {task.revised} </td> <td> {task.readable} </td>
                             {task.revised? <td></td> :
-                                <td> <button className={'edit-entry-btn'} onClick={() => {}}>
-                                    edit <i className="fas fa-edit"></i>
-                                </button> </td>}
+                                <td> <button className={'edit-entry-btn'} onClick={() => {
+                                    navigate(`/task/${index}/${page}`, {state: {page_tasks, name}})
+                                }}>edit <i className="fas fa-edit"></i></button> </td>}
                         </tr>
                     ))}
                 </tbody>
