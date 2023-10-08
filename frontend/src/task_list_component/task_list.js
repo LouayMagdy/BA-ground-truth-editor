@@ -1,16 +1,19 @@
 import './task_list.css'
 import BA_logo from "../images/BA.png";
-import {name} from "./tasks";
 import {useEffect, useState} from "react";
+import {useParams, useLocation, useNavigate} from "react-router-dom";
 
-function Task_list({init_page}) {
-    let [page_num, set_page] = useState(0)
+function Task_list() {
+    const location = useLocation()
+    const navigate = useNavigate()
+    const {page} = useParams()
+    const name = location.state
     let [max_page_num, set_max_page] = useState(26)
     let [page_tasks, set_tasks] = useState([])
 
     useEffect(() => {
-        let page = init_page >= 0? init_page : 0
-        set_page(page)
+        if(!Number.isInteger(Number(page))) navigate('/task/0')
+        console.log(page)
         fetch(`https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/tasks?page=${page}`, {
             method : 'GET',
         }).then((res) => res.json()).then((data) => {
@@ -18,17 +21,10 @@ function Task_list({init_page}) {
             set_max_page(data.max_page)
             set_tasks(data.entries)
         })
-    }, []);
+    }, [page]);
 
     let change_page = async (change) => {
-        set_page(page_num + change)
-        await fetch(`https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/tasks?page=${page_num+change}`, {
-            method : 'GET',
-        }).then((res) => res.json()).then((data) => {
-            console.log(data, 'from server')
-            set_max_page(data.max_page)
-            set_tasks(data.entries)
-        })
+        navigate(`/tasks/${Number(page) + change}`, {state: name})
     }
 
     return <div className={"task-list"}>
@@ -39,7 +35,10 @@ function Task_list({init_page}) {
             </div>
             <div className={'user-name-logout'}>
                 <h3 className={'greeting'}> Hello {name} </h3>
-                <label className={'logout'}> log out <i className="fas fa-sign-out-alt"></i> </label>
+                <label className={'logout'} onClick={() => {
+                    localStorage.removeItem('jrevwappt')
+                    navigate('/login')
+                }}>log out <i className="fas fa-sign-out-alt"></i> </label>
             </div>
         </nav>
 
@@ -54,7 +53,7 @@ function Task_list({init_page}) {
                 <tbody>
                     {page_tasks.map((task, index) => (
                         <tr key={index}>
-                            <td> {13 * page_num + index + 1} </td> <td className={'filename'}> {task.filename} </td>
+                            <td> {13 * Number(page) + index + 1} </td> <td className={'filename'}> {task.filename} </td>
                             <td> {task.modified} </td> <td> {task.revised} </td> <td> {task.readable} </td>
                             {task.revised? <td></td> :
                                 <td> <button className={'edit-entry-btn'} onClick={() => {}}>
@@ -67,10 +66,10 @@ function Task_list({init_page}) {
         </div>
 
         <div className={'page-slider'} style={{top: window.innerHeight * 21 / 24, left: window.innerWidth / 2.3}}>
-            <button className={'slider-btn'} disabled={page_num <= 0} onClick={() => change_page(-1)}>
+            <button className={'slider-btn'} disabled={Number(page) <= 0} onClick={() => change_page(-1)}>
                 &larr; prev </button>
-            <input type={'text'} disabled={true} value={page_num.toString()+' / '+max_page_num.toString()} className={'page-num'}/>
-            <button className={'slider-btn'} disabled={page_num >= max_page_num}
+            <input type={'text'} disabled={true} value={page + ' / '+ max_page_num.toString()} className={'page-num'}/>
+            <button className={'slider-btn'} disabled={Number(page) >= max_page_num}
                 onClick={() => change_page(1)}>next &rarr; </button>
         </div>
 

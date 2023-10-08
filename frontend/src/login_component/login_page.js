@@ -1,8 +1,10 @@
 import './login_page.css'
 import BA_logo from '../images/BA.png'
 import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 function Login_page(){
+    const navigate = useNavigate()
     let [user, set_user] = useState({username: "", password: ""})
     let update_user = (e) => {
         set_user({...user, [e.target.name]: e.target.value})
@@ -18,16 +20,17 @@ function Login_page(){
         if(user.password === '') passwordWarning.style.display = "block"
         if(user.username === '' || user.password === '') return
         let response = await fetch("https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/login",
-            {
-                method : 'POST',
-                headers : {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(user)
-            }).then((res) => res.json()).then((data) => {
-                console.log(data.token, 'from server')
-
-            })
+            {method : 'POST',
+                 headers : {'Content-Type': 'application/json'},
+                 body: JSON.stringify(user)})
+        if (response.status === 200){
+            let message = await response.json()
+            console.log(message.token)
+            localStorage.setItem('jrevwappt', message.token)
+            navigate('/tasks/0', {state: user.username})
+        }
+        else if(response.status === 401) window.alert('Not Registered!\nPlease Contact One of The System Admins...')
+        else window.alert("Something Went Wrong with Our Servers!!")
         console.log(user)
         set_user({username: "", password: ""});
     }
