@@ -22,9 +22,6 @@ db.getConnection()
 		process.exit(1)
 	})
   })
-app.get('/greet', (req, res) => {
-	res.send('welcome to the server')
-})
 
 app.use(login_route)
 app.use(task_route)

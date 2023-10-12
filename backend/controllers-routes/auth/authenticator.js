@@ -4,16 +4,21 @@ require('dotenv').config();
 const db = require("../../db_config")
 
 let authenticate = async (req, res, next) =>{
-    const token = req.header("auth-token");
-    if (!token) return res.status(401).json({message: "Access Denied"});
-    try {
-        let user_of_token = jwt.verify(token, process.env.token_secret);
-        console.log(user_of_token)
-        if(await verify_user(user_of_token)) next()
-        else return res.status(401).json({message: "Access Denied"});
+    try{
+        const token = req.header("auth-token");
+        if (!token) return res.status(401).json({message: "Access Denied"});
+        try {
+            let user_of_token = jwt.verify(token, process.env.token_secret);
+            console.log(user_of_token)
+            if(await verify_user(user_of_token)) next()
+            else return res.status(401).json({message: "Access Denied"});
+        }
+        catch (err){
+            return res.status(401).json({message: "Access Denied"});
+        }
     }
     catch (err){
-        return res.status(401).json({message: "Access Denied"});
+        res.status(500).json({message: "Server Error"});
     }
 }
 let verify_user = async (user_of_token) => {
