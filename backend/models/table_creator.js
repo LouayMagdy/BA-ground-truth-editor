@@ -1,4 +1,3 @@
-const db = require('../db_config')
 const user_table_query = require('./user')
 const file_table_query = require('./file')
 const edit_table_query = require('./edit')
