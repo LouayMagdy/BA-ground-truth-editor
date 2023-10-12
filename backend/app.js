@@ -1,14 +1,15 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require("cors");
+
 const db = require('./db_config')
-
 const create_tables = require('./models/table_creator')
-const login_routes = require('./controllers-routes/login-controller-route/login-routes')
-
+const login_route = require('./controllers-routes/login-controller-route/login-route')
+const task_route = require('./controllers-routes/task-controller-route/task-route')
 
 const app = express()
 app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
+app.use(express.json(), cors())
 app.use(morgan('dev'))
 
 db.getConnection()
@@ -24,4 +25,6 @@ db.getConnection()
 app.get('/greet', (req, res) => {
 	res.send('welcome to the server')
 })
-app.use(login_routes)
+
+app.use(login_route)
+app.use(task_route)
