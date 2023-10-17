@@ -60,6 +60,14 @@ let get_task_mod_date = async (connection, filename) => {
 /*** Task Editing Requests ***/
 
 let save_changes = async (connection, edit) => {
+    /***
+    attributes:
+     * connection: DB connection promise
+     * edit: EDIT Object containing necessary data about the edit.
+    returns:
+     * a message of is there any rows affected after updating an EDIT Records.
+     * this would be used in the Frontend to inform the user if his changes was saved or not.
+    ***/
     let user_id = await (utils.username_to_id(connection, edit.modified))
     let file_id = await (utils.filename_to_id(connection, edit.filename))
     let message = await connection.query(`UPDATE EDIT
@@ -71,10 +79,18 @@ let save_changes = async (connection, edit) => {
 }
 
 let revise_changes = async (connection, edit) => {
+    /***
+    attributes:
+     * connection: DB connection promise
+     * edit: EDIT Object containing necessary data about the edit.
+    returns:
+     * a message of is there any rows affected after updating an EDIT Records.
+     * this would be used in the Frontend to inform the user if his changes was saved or not.
+    ***/
     let user_id = await (utils.username_to_id(connection, edit.modified))
     let file_id = await (utils.filename_to_id(connection, edit.filename))
     let message = await connection.query(`Insert INTO EDIT(edited_at, edit_text, user_id, file_id)
-                                          VALUE(CURRENT_TIMESTAMP, "${edit.edit_text}", ${user_id}, ${file_id}`)
+                                          VALUE(CURRENT_TIMESTAMP, "${edit.edit_text}", ${user_id}, ${file_id})`)
     return !!message.affectedRows
 }
 

@@ -47,7 +47,7 @@ let save_edits = async (req, res) => {
     let connection = await db.getConnection()
     let is_edited = await utils.is_edited(connection, await utils.filename_to_id(connection, req.body.filename))
     if(is_edited){ /// revise
-        let is_saved = await task_service.save_changes(connection, req.body)
+        let is_saved = await task_service.revise_changes(connection, req.body)
         if(is_saved) res.json('Revised Successfully!')
         else res.json('Failed to Save your Reviews !!')
     }
