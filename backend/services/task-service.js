@@ -111,6 +111,39 @@ let revert = async (connection, filename) => {
                                     LIMIT 1`))[0]
 }
 
+let mark_unread_edit = async (connection, edit) => {
+    /***
+    attributes:
+     * connection: DB Connection
+     * edit: EDIT Object
+    Logic:
+     * marks the file as unreadable for the first time (there is no previous edit)
+    ***/
+    let file_id = await utils.filename_to_id(connection, edit.filename)
+    let user_id = await utils.username_to_id(connection, edit.modified)
+    let message = (await connection.query(`UPDATE  EDIT
+                                           SET     readable = False,
+                                                   edited_at = CURRENT_TIMESTAMP,
+                                                   user_id = ${user_id}
+                                           WHERE   file_id = ${file_id}`))
+    return !! message.affectedRows
+}
+
+let mark_unread_revise = async (connection, edit) => {
+    /***
+     attributes:
+     * connection: DB Connection
+     * edit: EDIT Object
+     Logic:
+     * marks the file as unreadable for the second time (there is some previous edit)
+     ***/
+    let file_id = await utils.filename_to_id(connection, edit.filename)
+    console.log(edit.filename, file_id)
+    let user_id = await utils.username_to_id(connection, edit.modified)
+    let message = (await connection.query(`Insert INTO EDIT(edited_at, readable, user_id, file_id)
+                                          VALUE(CURRENT_TIMESTAMP, FALSE, ${user_id}, ${file_id})`))
+    return !! message.affectedRows
+}
 
 module.exports = {
     get_all_tasks,
@@ -119,5 +152,7 @@ module.exports = {
     get_task_mod_date,
     save_changes,
     revise_changes,
-    revert
+    revert,
+    mark_unread_edit,
+    mark_unread_revise
 }

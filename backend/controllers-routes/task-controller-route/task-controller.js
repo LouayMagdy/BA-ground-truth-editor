@@ -46,13 +46,14 @@ let save_edits = async (req, res) => {
     ***/
     let connection = await db.getConnection()
     let edit_num = await utils.get_edit_nums(connection, await utils.filename_to_id(connection, req.body.filename))
-    if(edit_num > 0 && edit_num < 2){ /// revise
+    let need_to_revise = edit_num === 1 && !(await utils.is_the_same_user(connection, req.body))
+    if(need_to_revise){ /// revise
         let is_saved = await task_service.revise_changes(connection, req.body)
         await connection.release()
         if(is_saved) res.json({message:'Revised Successfully!'})
         else res.json({message: 'Failed to Save your Reviews !!'})
     }
-    else if (!edit_num) { /// edit
+    else if (!edit_num || (edit_num === 1 && !need_to_revise)) { /// edit
         let is_saved = await task_service.save_changes(connection, req.body)
         await connection.release()
         if(is_saved) res.json({message :'Saved Successfully!'})
@@ -71,11 +72,34 @@ let revert = async (req, res) => {
     res.json(last_edit)
 }
 
+let mark_unreadable = async (req, res) => {
+    /***
+    Logic: mark the task assigned with some file as unreadable
+    ***/
+    let connection = await db.getConnection()
+    let edit_num = await utils.get_edit_nums(connection, await utils.filename_to_id(connection, req.body.filename))
+    let need_to_revise = edit_num === 1 && !(await utils.is_the_same_user(connection, req.body))
+    if (need_to_revise){
+        let is_reverted = task_service.mark_unread_revise(connection, req.body)
+        await connection.release()
+        if(is_reverted) res.json({message :'Marked As Unreadable(2) Successfully!'})
+        else res.json({message: 'Failed to Mark the file as Unreadable!!'})
+    }
+    else if(!edit_num || (edit_num === 1 && !need_to_revise)){
+        let is_reverted = task_service.mark_unread_edit(connection, req.body)
+        await connection.release()
+        if(is_reverted) res.json({message :'Marked As Unreadable(1) Successfully!'})
+        else res.json({message: 'Failed to Mark the file as Unreadable!!'})
+    }
+    else res.json({message: 'Already Revised'})
+}
+
 module.exports = {
     get_tasks_of_page,
     get_task_image,
     get_task_text,
     get_task_mod_date,
     save_edits,
-    revert
+    revert,
+    mark_unreadable
 }
