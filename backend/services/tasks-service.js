@@ -40,7 +40,7 @@ let get_all_tasks = async (connection, min_id, max_id) => {
 
 let get_max_page = async (connection) => {
     let res = await connection.query("SELECT COUNT(*) AS 'COUNT' FROM EDIT")
-    return Number(String(res[0].COUNT)) / process.env.page_size
+    return Math.ceil(Number(String(res[0].COUNT)) / process.env.page_size)
 }
 
 
