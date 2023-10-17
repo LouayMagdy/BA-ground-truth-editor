@@ -45,17 +45,24 @@ let save_edits = async (req, res) => {
     Logic: saves the user edits/revisions of a certain task
     ***/
     let connection = await db.getConnection()
-    let is_edited = await utils.is_edited(connection, await utils.filename_to_id(connection, req.body.filename))
-    if(is_edited){ /// revise
+    let edit_num = await utils.get_edit_nums(connection, await utils.filename_to_id(connection, req.body.filename))
+    if(edit_num > 0 && edit_num < 2){ /// revise
         let is_saved = await task_service.revise_changes(connection, req.body)
-        if(is_saved) res.json('Revised Successfully!')
-        else res.json('Failed to Save your Reviews !!')
+        if(is_saved) res.json({message:'Revised Successfully!'})
+        else res.json({message: 'Failed to Save your Reviews !!'})
     }
-    else{ /// edit
+    else if (!edit_num) { /// edit
         let is_saved = await task_service.save_changes(connection, req.body)
-        if(is_saved) res.json('Saved Successfully!')
-        else res.json('Failed to Save your Modifications !!')
+        if(is_saved) res.json({message :'Saved Successfully!'})
+        else res.json({message: 'Failed to Save your Modifications !!'})
     }
+    else res.json({message: 'Already Revised'})
+}
+
+let revert = async (req, res) => {
+    /***
+    Logic: get the last saved user text assigned with a specific task.
+    ***/
 }
 
 module.exports = {
