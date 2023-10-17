@@ -1,3 +1,4 @@
+const e = require("express");
 
 let get_edit_nums = async (connection, file_id) => {
     /***
@@ -10,20 +11,17 @@ let get_edit_nums = async (connection, file_id) => {
      * - the first edit is considered the actual edit.
      * - the second edit is considered the revision.
      ***/
-    let count = Number((await connection.query(`SELECT COUNT(DISTINCT user_id) AS 'count'
+    return Number((await connection.query(`SELECT COUNT(DISTINCT user_id) AS 'count'
                                     FROM   EDIT
                                     WHERE  file_id = ${file_id}`))[0].count)
-    console.log(`count: ${count}`)
-    return count
 }
 
 let is_the_same_user = async (connection, edit) => {
-    let user_id = await username_to_id(edit.modified)
-    let file_id = await filename_to_id(edit.filename)
+    let user_id = await username_to_id(connection, edit.modified)
+    let file_id = await filename_to_id(connection, edit.filename)
     let result = (await connection.query(`SELECT id
                                           FROM   EDIT
                                           WHERE  file_id = ${file_id} AND user_id = ${user_id}`))
-    console.log(result, !!result.length, 'result length')
     return !!result.length
 }
 
@@ -40,7 +38,10 @@ let username_to_id = async (connection, username) => {
                                         FROM   USER 
                                         WHERE  username = "${username}"`))[0].id
     }
-    catch(err) {return 'NULL'}
+    catch(err) {
+        console.log(err)
+        return 'NULL'
+    }
 }
 
 let filename_to_id = async (connection, filename) => {
@@ -56,7 +57,10 @@ let filename_to_id = async (connection, filename) => {
                                         FROM   FILE 
                                         WHERE  filename = "${filename}"`))[0].id
     }
-    catch(err) {return 'NULL'}
+    catch(err) {
+        console.log(err)
+        return 'NULL'
+    }
 }
 
 

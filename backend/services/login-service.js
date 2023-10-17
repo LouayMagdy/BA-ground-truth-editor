@@ -23,7 +23,9 @@ let login = async (connection, user)=> {
      Logic:
       * updating the last_login_date of the authorized user at login. this date is used in generating JWT
      ***/
-    let message = await connection.query(`UPDATE USER SET last_login_at = CURRENT_TIMESTAMP WHERE username = "${user.username}"`)
+    let message = await connection.query(`UPDATE USER 
+                                          SET    last_login_at = CONVERT_TZ(CURRENT_TIMESTAMP, 'UTC', 'Africa/Cairo') 
+                                          WHERE  username = "${user.username}"`)
     return message.affectedRows > 0
 }
 

@@ -13,7 +13,7 @@ let save_changes = async (connection, edit) => {
     let user_id = await (utils.username_to_id(connection, edit.modified))
     let file_id = await (utils.filename_to_id(connection, edit.filename))
     let message = await connection.query(`UPDATE EDIT
-                                          SET    edited_at = CURRENT_TIMESTAMP, 
+                                          SET    edited_at = CONVERT_TZ(CURRENT_TIMESTAMP, 'UTC', 'Africa/Cairo'), 
                                                  edit_text = "${edit.edit_text}", 
                                                  user_id  = ${user_id} 
                                           WHERE  file_id = ${file_id}`)
@@ -32,7 +32,8 @@ let revise_changes = async (connection, edit) => {
     let user_id = await (utils.username_to_id(connection, edit.modified))
     let file_id = await (utils.filename_to_id(connection, edit.filename))
     let message = await connection.query(`Insert INTO EDIT(edited_at, edit_text, user_id, file_id)
-                                          VALUE(CURRENT_TIMESTAMP, "${edit.edit_text}", ${user_id}, ${file_id})`)
+                                          VALUE(CONVERT_TZ(CURRENT_TIMESTAMP, 'UTC', 'Africa/Cairo'), 
+                                                "${edit.edit_text}", ${user_id}, ${file_id})`)
     return !!message.affectedRows
 }
 
@@ -65,7 +66,7 @@ let mark_unread_edit = async (connection, edit) => {
     let user_id = await utils.username_to_id(connection, edit.modified)
     let message = (await connection.query(`UPDATE  EDIT
                                            SET     readable = False,
-                                                   edited_at = CURRENT_TIMESTAMP,
+                                                   edited_at = CONVERT_TZ(CURRENT_TIMESTAMP, 'UTC', 'Africa/Cairo'),
                                                    user_id = ${user_id}
                                            WHERE   file_id = ${file_id}`))
     return !! message.affectedRows
@@ -83,7 +84,8 @@ let mark_unread_revise = async (connection, edit) => {
     console.log(edit.filename, file_id)
     let user_id = await utils.username_to_id(connection, edit.modified)
     let message = (await connection.query(`Insert INTO EDIT(edited_at, readable, user_id, file_id)
-                                          VALUE(CURRENT_TIMESTAMP, FALSE, ${user_id}, ${file_id})`))
+                                          VALUE(CONVERT_TZ(CURRENT_TIMESTAMP, 'UTC', 'Africa/Cairo'), 
+                                                FALSE, ${user_id}, ${file_id})`))
     return !! message.affectedRows
 }
 

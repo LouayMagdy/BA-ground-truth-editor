@@ -1,11 +1,39 @@
 require('dotenv').config();
 
-let get_all_tasks = async (connection, to_skip) => {
-    let tasks = await connection.query(`SELECT USER.username, FILE.filename, EDIT.readable 
-                                   FROM EDIT JOIN FILE ON EDIT.file_id = FILE.id
-                                   JOIN USER ON EDIT.user_id = USER.id
-                                   ORDER BY edited_at
-                                   LIMIT ${process.env.page_size} OFFSET ${to_skip}`)
+let get_all_tasks = async (connection, min_id, max_id) => {
+    let tasks = await connection.query(`SELECT FILE.filename, EUSER.username AS 'modified', RESULT.modified_at, RESULT.readable, 
+                                               RUSER.username, RESULT.revised_at
+                                        FROM(
+                                            SELECT REVISION.file_id, EDITION.user_id AS 'modified', REVISION.readable, 
+                                                    CONVERT_TZ(EDITION.edited_at, 'UTC', 'Africa/Cairo') AS 'modified_at', 
+                                                CASE
+                                                    WHEN REVISION.edited_at = EDITION.edited_at THEN NULL
+                                                    ELSE REVISION.user_id
+                                                END AS 'revised',
+                                                CASE
+                                                    WHEN REVISION.edited_at = EDITION.edited_at THEN NULL
+                                                    ELSE CONVERT_TZ(REVISION.edited_at, 'UTC', 'Africa/Cairo')
+                                                END AS 'revised_at'
+                                            FROM ( SELECT E.file_id, E.user_id, E.edited_at, E.readable
+                                                   FROM EDIT E NATURAL JOIN (
+                                                        SELECT   file_id, MAX(edited_at) AS 'edited_at'
+                                                        FROM     EDIT
+                                                        WHERE    file_id > ${min_id} AND file_id < ${max_id}
+                                                        GROUP BY file_id) AS E_MAX                                                     
+                                                 ) AS REVISION JOIN (
+                                                   SELECT E.file_id, E.user_id, E.edited_at, E.readable
+                                                   FROM EDIT E NATURAL JOIN (
+                                                        SELECT   file_id, MIN(edited_at) AS 'edited_at'
+                                                        FROM     EDIT
+                                                        WHERE    file_id > ${min_id} AND file_id < ${max_id}
+                                                        GROUP BY file_id) AS E_MIN 
+                                                 ) AS EDITION 
+                                                 ON REVISION.file_id = EDITION.file_id
+                                            ) AS RESULT 
+                                            JOIN USER EUSER ON RESULT.modified = EUSER.id
+                                            JOIN USER RUSER ON RESULT.revised = RUSER.id
+                                            JOIN FILE ON RESULT.file_id = FILE.id
+                                        `)
     console.log(tasks)
     return tasks
 }
