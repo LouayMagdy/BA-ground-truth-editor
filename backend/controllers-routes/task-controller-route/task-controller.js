@@ -12,6 +12,18 @@ let get_tasks_of_page = async (req, res) => {
     res.json({entries: tasks, max_page})
 }
 
+let get_task_image = (req, res) => {
+    res.sendFile(`./${req.params.filename}`, {root: process.env.file_store})
+}
+
+let get_task_text = async (req, res) => {
+    let connection = await db.getConnection()
+    let text = await task_service.get_task_text(connection, req.params.edit_text)
+    res.json({edit_text: text})
+}
+
 module.exports = {
-    get_tasks_of_page
+    get_tasks_of_page,
+    get_task_image,
+    get_task_text
 }

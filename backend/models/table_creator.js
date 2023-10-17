@@ -14,7 +14,7 @@ async function create_tables(connection) {
 	} finally {
 		if (connection) {
 			connection.release()
-			console.log('Connection released with MariaDB!')
+			console.log('> Essential Tables Created (IF NOT EXISTED)!!')
 		}
 	}
 }
