@@ -11,7 +11,7 @@ router.get("/revapp/task/text/:filename", authenticate, task_controller.get_task
 router.get("/revapp/task/date/:filename", authenticate, task_controller.get_task_mod_date);
 
 router.put("/revapp/task/save", authenticate, task_controller.save_edits);
-router.put("/revapp/task/revert", authenticate, );
+router.get("/revapp/task/revert/:filename", authenticate, task_controller.revert);
 router.put("/revapp/task/unread", authenticate, );
 
 module.exports = router;

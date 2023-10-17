@@ -94,6 +94,23 @@ let revise_changes = async (connection, edit) => {
     return !!message.affectedRows
 }
 
+let revert = async (connection, filename) => {
+    /***
+    attribute:
+     * connection: DB connection promise
+     * filename: (String) associated with each task
+    returns
+     * last EDIT Table record for this filename
+    ***/
+    let file_id = await utils.filename_to_id(connection, filename)
+    return (await connection.query(`SELECT   filename, username AS 'modified', edit_text, edited_at, readable
+                                    FROM     EDIT E JOIN FILE F ON E.file_id = F.id
+                                             JOIN USER U ON E.user_id = U.id
+                                    WHERE    file_id = ${file_id}
+                                    ORDER BY edited_at DESC
+                                    LIMIT 1`))[0]
+}
+
 
 module.exports = {
     get_all_tasks,
@@ -101,5 +118,6 @@ module.exports = {
     get_task_text,
     get_task_mod_date,
     save_changes,
-    revise_changes
+    revise_changes,
+    revert
 }
