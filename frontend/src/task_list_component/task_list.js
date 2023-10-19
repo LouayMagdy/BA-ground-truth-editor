@@ -67,12 +67,12 @@ function Task_list() {
                 </thead>
                 <tbody>
                     {page_tasks.map((task, index) => (
-                        <tr key={index}>
+                        <tr>
                             <td> {page_size * Number(page) + index + 1} </td> <td className={'filename'}> {task.filename} </td>
                             <td> {task.modified} </td> <td> {task.revised} </td> <td> {task.readable?"Yes" : "No"}  </td>
                             {task.revised? <td></td> :
                                 <td> <button className={'edit-entry-btn'} onClick={() => {
-                                    navigate(`/task/${index}/${page}`, {state: {page_tasks, name}})
+                                    navigate(`/task/${task.filename}`, {state: name})
                                 }}>edit <i className="fas fa-edit"></i></button> </td>}
                         </tr>
                     ))}

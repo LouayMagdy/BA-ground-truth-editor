@@ -119,6 +119,9 @@
     color: white;
     cursor: pointer;
 }
+.save-btn:disabled, .revert-btn:disabled, .unread-btn:disabled{
+    cursor: not-allowed;
+}
 .save-btn:active, .revert-btn:active, .unread-btn:active{
     transform: scale(1.1);
 }

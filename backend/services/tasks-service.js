@@ -34,6 +34,7 @@ let get_all_tasks = async (connection, min_id, max_id) => {
                                             LEFT JOIN USER EUSER ON RESULT.modified = EUSER.id
                                             LEFT JOIN USER RUSER ON RESULT.revised = RUSER.id
                                             JOIN FILE ON RESULT.file_id = FILE.id
+                                            ORDER BY RESULT.file_id
                                         `)
     return tasks
 }

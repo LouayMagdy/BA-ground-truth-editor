@@ -63,10 +63,29 @@ let filename_to_id = async (connection, filename) => {
     }
 }
 
+let file_id_to_filename = async (connection, file_id) => {
+    /***
+     attributes:
+     * connection: DB Connection promise
+     * file_id: Number
+     returns:
+     * the filename in File Table
+     ***/
+    try{
+        return (await connection.query(`SELECT filename
+                                        FROM   FILE 
+                                        WHERE  id = ${file_id}`))[0].filename
+    }
+    catch(err) {
+        console.log(err)
+        return 'NULL'
+    }
+}
 
 module.exports = {
     get_edit_nums,
     username_to_id,
     filename_to_id,
-    is_the_same_user
+    is_the_same_user,
+    file_id_to_filename
 }
