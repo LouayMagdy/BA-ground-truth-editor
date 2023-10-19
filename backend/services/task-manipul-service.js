@@ -16,7 +16,7 @@ let save_changes = async (connection, edit) => {
     let message = await connection.query(`UPDATE EDIT
                                           SET    edited_at = CONVERT_TZ(CURRENT_TIMESTAMP, 'UTC', 'Africa/Cairo'), 
                                                  edit_text = "${edit.edit_text}",
-                                                 readable = ${edit.readable}  
+                                                 readable = ${edit.readable},
                                                  user_id  = ${user_id} 
                                           WHERE  file_id = ${file_id}`)
     return !!message.affectedRows
