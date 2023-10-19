@@ -19,18 +19,21 @@ function Login_page(){
         if(user.username === '') usernameWarning.style.display = "block"
         if(user.password === '') passwordWarning.style.display = "block"
         if(user.username === '' || user.password === '') return
-        let response = await fetch("https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/login",
+        let response = await fetch("http://localhost:3001/ground-truth-editor/login",
             {method : 'POST',
                  headers : {'Content-Type': 'application/json'},
                  body: JSON.stringify(user)})
         if (response.status === 200){
-            let message = await response.json()
-            console.log(message.token)
-            localStorage.setItem('jrevwappt', message.token)
+            const headers = response.headers;
+            const jwt = headers.get('auth-token');
+            localStorage.setItem('jrevwappt', jwt)
             localStorage.setItem('revappname', user.username)
             navigate('/tasks/0', {state: user.username})
         }
-        else if(response.status === 401) window.alert('Not Registered!\nPlease Contact One of The System Admins...')
+        else if(response.status === 401) {
+            let res_json = await response.json()
+            window.alert(`${res_json.token}\nPlease Contact One of The System Admins...`)
+        }
         else window.alert("Something Went Wrong with Our Servers!!")
         console.log(user)
         set_user({username: "", password: ""});

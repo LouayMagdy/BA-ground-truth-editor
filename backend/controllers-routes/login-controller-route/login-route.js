@@ -3,5 +3,5 @@ const router = express.Router()
 const login_controller = require('./login-contoller')
 
 
-router.post('/revapp/login', login_controller)
+router.post('/ground-truth-editor/login', login_controller)
 module.exports = router

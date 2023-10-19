@@ -24,7 +24,8 @@ let login = async (req, res) => {
         let logged = false
         while (!logged) logged = await login_service.login(connection, req.body)
         await connection.release()
-        res.setHeader('auth-token', generate_token(user[0])).json({message: "Logged in Successfully!"})
+        res.set('auth-token', generate_token(user[0]))
+        res.json({message: "Logged in Successfully!"})
     }
     catch (err){
         console.log(err)
