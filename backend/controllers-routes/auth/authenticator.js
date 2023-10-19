@@ -19,6 +19,7 @@ let authenticate = async (req, res, next) =>{
         try {
             let user_of_token = jwt.verify(token, process.env.token_secret);
             console.log(user_of_token)
+            if(req.body) req.body.modified = user_of_token.username
             if(await verify_user(user_of_token)) next()
             else return res.status(401).json({message: "Access Denied"});
         }
