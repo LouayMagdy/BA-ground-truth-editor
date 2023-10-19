@@ -23,8 +23,9 @@ let login = async (req, res) => {
         // editing the last login date of the user and using it to generate a JWT to be sent
         let logged = false
         while (!logged) logged = await login_service.login(connection, req.body)
-        await connection.release()
         res.set('auth-token', generate_token((await login_service.find_one_user(connection, req.body.username))[0]))
+        await connection.release()
+        await connection.end()
         res.json({message: "Logged in Successfully!"})
     }
     catch (err){

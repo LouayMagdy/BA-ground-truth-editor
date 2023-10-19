@@ -8,28 +8,48 @@ function Task_Edit() {
     const navigate = useNavigate()
     let {id, page} = useParams()
     let {name, page_tasks} = location.state
-    let [task_mod_date, set_mod_date] = useState('2023/01/01')
+    let [task_mod_date, set_mod_date] = useState('1970/01/01')
+    let [task_rev_date, set_rev_date] = useState('1970/01/01')
     let [edit_text, set_edit_text] = useState('')
     let [edit_image, set_edit_image] = useState()
     let [tasks, set_tasks] = useState(page_tasks)
+
+    const options = { timeZone: 'Africa/Cairo', year: 'numeric', month: 'long',
+        day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
 
     let change_task = (change) => {
         navigate(`/task/${Number(id) + change}/${page}`, {state: {tasks, name}})
     }
 
     let save = async () =>{
-        await fetch('https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/save', {
+        await fetch('http://localhost:3001/ground-truth-editor/task/save', {
             method : 'PUT',
-            headers : {'Content-Type': 'application/json'},
+            headers : {'Content-Type': 'application/json',
+                       'auth-token': localStorage.getItem('jrevwappt')},
             body: JSON.stringify(tasks[Number(id)])
-        }).then((res) => res.json()).then((data) => {window.alert(data.message)})
+        }).then((res) => res.json()).then((data) => {
+            if (data.message === 'Saved Successfully!' || data.message === 'Revised Successfully!')
+                tasks[Number(id)].edit_text = edit_text
+            window.alert(data.message)
+        })
+
+        await fetch(`http://localhost:3001/ground-truth-editor/tasks/${page}`, {
+            method : 'GET',
+        }).then((res) => res.json()).then((data) => {
+            console.log(data, 'from server')
+            let new_tasks = data.entries
+            set_tasks(new_tasks)
+        })
     }
     let revert = async () => {
-        await fetch('https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/revert', {
-            method : 'POST',
-            headers : {'Content-Type': 'application/json'},
-            body: JSON.stringify(tasks[Number(id)])
-        }).then((res) => res.json()).then((data) => {set_edit_text(data.edit_text)})
+        await fetch(`http://localhost:3001/ground-truth-editor/task/revert/${tasks[Number(id)].filename}`, {
+            method : 'GET',
+            headers : {'Content-Type': 'application/json',
+                       'auth-token': localStorage.getItem('jrevwappt')},
+        }).then((res) => res.json()).then((data) => {
+            if(data.edit_text) set_edit_text(data.edit_text)
+            else set_edit_text('')
+        })
     }
 
     let unread = async () => {
@@ -39,7 +59,7 @@ function Task_Edit() {
             body: JSON.stringify(tasks[Number(id)])
         }).then(() => {console.log('done')})
 
-        await fetch(`https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/tasks?page=${page}`, {
+        await fetch(`http://localhost:3001/ground-truth-editor/tasks/${page}`, {
             method : 'GET',
         }).then((res) => res.json()).then((data) => {
             console.log(data, 'from server')
@@ -52,34 +72,55 @@ function Task_Edit() {
         console.log(location.state)
         if(!localStorage.getItem('jrevwappt')) navigate('/login')
         if (!name) name = localStorage.getItem('revappname')
-    }, []);
+    }, [Number(id)]);
+
 
     useEffect(() => {
-        fetch('https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/edit_text', {
-            method : 'POST',
-            headers : {'Content-Type': 'application/json'},
-            body: JSON.stringify(tasks[Number(id)])
-        }).then((res) => res.json()).then((data) => {set_edit_text(data.edit_text)})
+        fetch(`http://localhost:3001/ground-truth-editor/task/text/${tasks[Number(id)].filename}`, {
+            method : 'GET',
+            headers : {'Content-Type': 'application/json',
+                        'auth-token': localStorage.getItem('jrevwappt')},
+        }).then((res) => res.json()).then((data) => {
+            if(data.edit_text) set_edit_text(data.edit_text)
+            else set_edit_text('')
+        })
+        return () => {}
     }, [Number(id)])
 
     useEffect(() => {
-        fetch('https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/mod_date', {
-            method : 'POST',
-            headers : {'Content-Type': 'application/json'},
-            body: JSON.stringify(tasks[Number(id)])
-        }).then((res) => res.json()).then((data) => {set_mod_date(data.mod_date)})
+        fetch(`http://localhost:3001/ground-truth-editor/task/date/${tasks[Number(id)].filename}`, {
+            method : 'GET',
+            headers : {'Content-Type': 'application/json',
+                       'auth-token': localStorage.getItem('jrevwappt')},
+        }).then((res) => res.json()).then((data) => {
+            if(data.modified_at !== ''){
+                const mod_date = new Date(data.modified_at);
+                console.log(mod_date)
+                set_mod_date(mod_date.toLocaleDateString('en-US', options))
+            }
+            else set_mod_date('')
+
+            if(data.revised_at !== ''){
+                const rev_date = new Date(data.revised_at);
+                set_rev_date(rev_date.toLocaleDateString('en-US', options))
+            }
+            else set_rev_date('')
+
+        })
+        return () => {}
     }, [Number(id)])
 
     useEffect(() => {
-        fetch('https://images.pexels.com/photos/9638689/pexels-photo-9638689.jpeg?cs=srgb&dl=pexels-kammeran-gonzalezkeola-9638689.jpg&fm=jpg&_gl=1*1gxh0v*_ga*MTgzMTEwNDQ2My4xNjk2NTIzMzQz*_ga_8JE65Q40S6*MTY5NjUzMDQ0Ni4yLjEuMTY5NjUzMDQ1Ny4wLjAuMA..', {
-            method : 'GET', // to be POST
-            headers : {'Content-Type': 'application/json'},
-            // body: JSON.stringify(tasks[Number(id)])
+        fetch(`http://localhost:3001/ground-truth-editor/task/image/${tasks[Number(id)].filename}`, {
+            method : 'GET',
+            headers : {'Content-Type': 'application/json',
+                       'auth-token': localStorage.getItem('jrevwappt')},
         }).then(response => response.blob()).then(blob => {
             const reader = new FileReader();
             reader.onloadend = () => {set_edit_image(reader.result);};
             reader.readAsDataURL(blob);
         });
+        return () => {}
     }, [Number(id)])
     
     return <div className={'task-edit'}>
@@ -108,11 +149,12 @@ function Task_Edit() {
                         </tr>
                         <tr>
                             <th> Modified by </th>
-                            <td> {tasks[Number(id)].modified} at {task_mod_date} (Marked as {tasks[Number(id) % 13].readable === 'yes'? 'Readable' : 'Not Readable'}) </td>
+                            <td> {tasks[Number(id)].modified} {task_rev_date === ''? '' : (' at ' + task_mod_date)}
+                                (Marked as {tasks[Number(id) % 13].readable === 'yes'? 'Readable' : 'Not Readable'}) </td>
                         </tr>
                         <tr>
                             <th> Revised by </th>
-                            <td> {tasks[Number(id)].revised} </td>
+                            <td> {tasks[Number(id)].revised} {task_rev_date === ""? '' : (' at '+ task_rev_date)} </td>
                         </tr>
                     </tbody>
                 </table>

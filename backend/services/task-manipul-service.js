@@ -46,12 +46,11 @@ let revert = async (connection, filename) => {
      * last EDIT Table record for this filename
     ***/
     let file_id = await utils.filename_to_id(connection, filename)
-    return (await connection.query(`SELECT   filename, username AS 'modified', edit_text, edited_at, readable
-                                    FROM     EDIT E JOIN FILE F ON E.file_id = F.id
-                                             JOIN USER U ON E.user_id = U.id
-                                    WHERE    file_id = ${file_id}
-                                    ORDER BY edited_at DESC
-                                    LIMIT 1`))[0]
+     return (await connection.query(`SELECT   edit_text
+                                     FROM     EDIT
+                                     where    file_id = ${file_id}
+                                     ORDER BY edited_at DESC
+                                     LIMIT 1`))[0]
 }
 
 let mark_unread_edit = async (connection, edit) => {

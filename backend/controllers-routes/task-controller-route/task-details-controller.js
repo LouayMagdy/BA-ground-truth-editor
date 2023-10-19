@@ -18,6 +18,7 @@ let get_task_text = async (req, res) => {
     let connection = await db.getConnection()
     let text = await task_service.get_task_text(connection, req.params.filename)
     await connection.release()
+    await connection.end()
     res.json({edit_text: text})
 }
 
@@ -27,6 +28,8 @@ let get_task_mod_date = async (req, res) => {
      ***/
     let connection = await db.getConnection()
     let dates = await task_service.get_task_mod_date(connection, req.params.filename)
+    await connection.release()
+    await connection.end()
     res.json(dates)
 }
 

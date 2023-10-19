@@ -48,6 +48,8 @@ let verify_user = async (user_of_token) => {
       AND last_login_at = "${user_of_token.last_login_at}"
     ) AS user_found
   `);
+    await connection.release()
+    await connection.end()
     return result[0].user_found;
 };
 
