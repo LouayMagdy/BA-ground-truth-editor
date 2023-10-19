@@ -11,20 +11,20 @@ let login = async (req, res) => {
         // check if the DB has a user with this username
         let user = await login_service.find_one_user(connection, req.body.username)
         if(!user.length) {
-            res.status(401).json({token: 'Not Registered!'})
+            res.status(401).json({message: 'Not Registered!'})
             return
         }
         // check the correctness of the user password (authorization)
         let valid = await login_service.validate_password(user[0].password, req.body.password)
         if(!valid){
-            res.status(401).json({token: 'Incorrect Password!!'})
+            res.status(401).json({message: 'Incorrect Password!!'})
             return
         }
         // editing the last login date of the user and using it to generate a JWT to be sent
         let logged = false
         while (!logged) logged = await login_service.login(connection, req.body)
         await connection.release()
-        res.set('auth-token', generate_token(user[0]))
+        res.set('auth-token', generate_token((await login_service.find_one_user(connection, req.body.username))[0]))
         res.json({message: "Logged in Successfully!"})
     }
     catch (err){

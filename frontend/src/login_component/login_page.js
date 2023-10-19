@@ -32,7 +32,7 @@ function Login_page(){
         }
         else if(response.status === 401) {
             let res_json = await response.json()
-            window.alert(`${res_json.token}\nPlease Contact One of The System Admins...`)
+            window.alert(`${res_json.message}\nPlease Contact One of The System Admins...`)
         }
         else window.alert("Something Went Wrong with Our Servers!!")
         console.log(user)

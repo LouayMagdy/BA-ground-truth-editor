@@ -12,7 +12,10 @@ let find_one_user = async (connection, username)=> {
     Logic:
      * finding one user with a given username to detect if the user is registered in our DB before login
     ***/
-    return await connection.query(`SELECT * FROM USER WHERE username = "${username}"`)
+    return await connection.query(`SELECT  id, name, email, username, password, 
+                                   CONVERT_TZ(last_login_at, 'UTC', 'Africa/Cairo') AS "last_login_at"
+                                   FROM    USER 
+                                   WHERE   username = "${username}"`)
 }
 
 let login = async (connection, user)=> {
@@ -47,6 +50,7 @@ let generate_token = (user) => {
     Logic:
      * Generating a JWT using the username and last_login_date of him:
     ***/
+    console.log("generating token",user)
     return jwt.sign({ username: user.username, last_login_at: user.last_login_at}, secret_token)
 }
 

@@ -11,6 +11,7 @@ let get_tasks_of_page = async (req, res) => {
     let tasks = await task_service.get_all_tasks(connection, min, max)
     let max_page = await task_service.get_max_page(connection)
     await connection.release()
+    console.log({entries: tasks, max_page})
     res.json({entries: tasks, max_page})
 }
 

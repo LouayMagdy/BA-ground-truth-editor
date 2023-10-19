@@ -10,20 +10,33 @@ function Task_list() {
     let name = location.state
     let [max_page_num, set_max_page] = useState(26)
     let [page_tasks, set_tasks] = useState([])
+    const page_size = 13
+
 
     useEffect(() => {
-        if(!localStorage.getItem('jrevwappt')) navigate('/login')
-        if (!name) name = localStorage.getItem('revappname')
-        if(!Number.isInteger(Number(page))) navigate('/task/0')
-        console.log(page)
-        fetch(`https://2ce0aa36-774d-48d5-a90d-13319970e9a5.mock.pstmn.io/revapp/tasks?page=${page}`, {
-            method : 'GET',
-        }).then((res) => res.json()).then((data) => {
-            console.log(data, 'from server')
-            set_max_page(data.max_page)
-            set_tasks(data.entries)
-        })
+        let isMounted = true;
+        if (!localStorage.getItem('jrevwappt')) navigate('/login');
+        if (!name) name = localStorage.getItem('revappname');
+        if (!Number.isInteger(Number(page))) navigate('/task/0');
+        console.log(page);
+        async function fetch_data() {
+            let response = await fetch(`http://localhost:3001/ground-truth-editor/tasks/${page}`, {
+                method: 'GET',
+                headers: { 'auth-token': localStorage.getItem('jrevwappt') }
+            });
+            console.log(response.status);
+            if (response.status === 200 && isMounted) {
+                let res_json = await response.json();
+                set_max_page(res_json.max_page);
+                set_tasks(res_json.entries);
+            }
+        }
+        fetch_data().then(() => {});
+        return () => {
+            isMounted = false;
+        };
     }, [page]);
+
 
     let change_page = async (change) => {
         navigate(`/tasks/${Number(page) + change}`, {state: name})
@@ -55,8 +68,8 @@ function Task_list() {
                 <tbody>
                     {page_tasks.map((task, index) => (
                         <tr key={index}>
-                            <td> {13 * Number(page) + index + 1} </td> <td className={'filename'}> {task.filename} </td>
-                            <td> {task.modified} </td> <td> {task.revised} </td> <td> {task.readable} </td>
+                            <td> {page_size * Number(page) + index + 1} </td> <td className={'filename'}> {task.filename} </td>
+                            <td> {task.modified} </td> <td> {task.revised} </td> <td> {task.readable?"Yes" : "No"}  </td>
                             {task.revised? <td></td> :
                                 <td> <button className={'edit-entry-btn'} onClick={() => {
                                     navigate(`/task/${index}/${page}`, {state: {page_tasks, name}})
