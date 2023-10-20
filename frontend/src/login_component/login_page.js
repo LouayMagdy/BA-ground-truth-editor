@@ -32,7 +32,9 @@ function Login_page(){
         }
         else if(response.status === 401) {
             let res_json = await response.json()
-            window.alert(`${res_json.message}\nPlease Contact One of The System Admins...`)
+            if (res_json.message === 'Not Registered!')
+                window.alert(`${res_json.message}\nPlease Contact One of The System Admins...`)
+            else window.alert(`${res_json.message}\nPlease Try Again !`)
         }
         else window.alert("Something Went Wrong with Our Servers!!")
         console.log(user)
