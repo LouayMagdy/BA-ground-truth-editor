@@ -112,17 +112,24 @@ This architecture is popular among developers and is widely used for building mo
 
 ## How to Use:
 1. **Clone** this repositiry:
-   * `git clone git@github.com:LouayMagdy/BA-ground-truth-editor.git` or
-   * `git clone https://github.com/LouayMagdy/BA-ground-truth-editor.git`.   
+* `git clone git@github.com:LouayMagdy/BA-ground-truth-editor.git` or
+* `git clone https://github.com/LouayMagdy/BA-ground-truth-editor.git`.   
 2. **Start the Maria DB server** and **create a database** of a certain name. e.g., `revapp`.
 3. Edit the following fields in the **node environment variables file** [.env](./backend/.env) according to yours:
    <p align="enter"> <img src="https://github.com/LouayMagdy/BA-ground-truth-editor/assets/95547833/6f61b0c7-7426-4244-8a18-f877ef616e4e"> </p>
+   
+* If port 3001 is not appropriate for you, make sure to change it for API requests in: [login_page.js](./frontend/src/login_component/login_page.js), [task_edit.js](./frontend/src/task_edit_component/task_edit.js) , and [task_list.js](./frontend/src/task_list_component/task_list.js)
 4. Install the required packages for the backend:
-    * `cd backend`
-    * `sudo npm install` 
-5. **Start the backend** server: `sudo node start app.js`
-6. Install the required packages for the frontend:
-    * `cd frontend`
-    * `sudo npm install`
-7. Start the client: `sudo npm start`
+* `cd backend`
+* `sudo npm install` 
+5. **Prepare a CSV file of the user data** (each record is comma separated **without spaces** as [here](./backend/data-to-import/users.csv)) to import into the DB. 
+6. **Rename** the CSV file into **users.csv** and store it [backend/data-to-import]('./backend/backend/data-to-import')
+7. Run [password_importer.js](./backend/password_importer.js) to import user data into the DB: `sudo node password_imported.js` </br>
+* This step is hashing passwords into the DB as well using bcrypt library.
+* Thus, if the passwords in [users.csv](./backend/data-to-import/users.csv) are encrypted using another method, make sure to add your encryption method before the **bcrypt comparison** in    **validate_password method** in [login-service.js](./backend/services/login-service.js) 
+8. **Start the backend** server: `sudo node start app.js`. This by default will start the server at port 3001
+9. Install the required packages for the frontend:
+* `cd ../frontend`
+* `sudo npm install`
+10. Start the frontend client: `sudo npm start`. This by default will start the client at port 3000. 
    
