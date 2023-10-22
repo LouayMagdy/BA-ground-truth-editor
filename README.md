@@ -125,10 +125,10 @@ This architecture is popular among developers and is widely used for building mo
 * `sudo npm install` 
 5. **Prepare a CSV file of the user data** (each record is comma separated **without spaces** as [here](./backend/data-to-import/users.csv)) to import into the DB. 
 6. **Rename** the CSV file into **users.csv** and store it [backend/data-to-import]('./backend/backend/data-to-import')
-7. Run [password_importer.js](./backend/password_importer.js) to import user data into the DB: `sudo node password_imported.js` </br>
+7. **Start the backend** server: `sudo node start app.js`. This by default will start the server at port 3001
+8. Run [password_importer.js](./backend/password_importer.js) to import user data into the DB: `sudo node password_imported.js` </br>
 * This step is hashing passwords into the DB as well using bcrypt library.
 * Thus, if the passwords in [users.csv](./backend/data-to-import/users.csv) are encrypted using another method, make sure to add your encryption method before the **bcrypt comparison** in    **validate_password method** in [login-service.js](./backend/services/login-service.js) 
-8. **Start the backend** server: `sudo node start app.js`. This by default will start the server at port 3001
 9. Install the required packages for the frontend:
 * `cd ../frontend`
 * `sudo npm install`
